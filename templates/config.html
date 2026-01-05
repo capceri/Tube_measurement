@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel hero">
+  <div>
+    <h1>Targets & Offsets</h1>
+    <p>Edit targets, tolerances, and offsets in inches.</p>
+  </div>
+</section>
+
+<section class="panel">
+  <form method="post">
+    <div class="grid two">
+      <div id="targets-section">
+        <h2>Targets & Tolerances</h2>
+        <div class="form-grid">
+          <label>d1 target (in)</label>
+          <input type="number" step="0.001" name="d1_target_in" value="{{ format_float(cfg.targets.d1_target / 25.4) }}" required>
+
+          <label>d1 tol (in)</label>
+          <input type="number" step="0.001" name="d1_tol_in" value="{{ format_float(cfg.targets.d1_tol / 25.4) }}" required>
+
+          <label>d2 target (in)</label>
+          <input type="number" step="0.001" name="d2_target_in" value="{{ format_float(cfg.targets.d2_target / 25.4) }}" required>
+
+          <label>d2 tol (in)</label>
+          <input type="number" step="0.001" name="d2_tol_in" value="{{ format_float(cfg.targets.d2_tol / 25.4) }}" required>
+
+          <label>length target (in)</label>
+          <input type="number" step="0.001" name="len_target_in" value="{{ format_float(cfg.targets.len_target / 25.4) }}" required>
+
+          <label>length tol (in)</label>
+          <input type="number" step="0.001" name="len_tol_in" value="{{ format_float(cfg.targets.len_tol / 25.4) }}" required>
+
+          <label>dDelta max (in)</label>
+          <input type="number" step="0.001" name="ddelta_max_in" value="{{ format_float(cfg.targets.dDelta_max / 25.4) }}" required>
+
+          <label>end1 max (in)</label>
+          <input type="number" step="0.001" name="end1_max_in" value="{{ format_float(cfg.targets.end1_max / 25.4) }}" required>
+
+          <label>end2 max (in)</label>
+          <input type="number" step="0.001" name="end2_max_in" value="{{ format_float(cfg.targets.end2_max / 25.4) }}" required>
+        </div>
+      </div>
+      <div id="offsets-section">
+        <h2>Offsets</h2>
+        <div class="form-grid">
+          {% for idx in range(8) %}
+          <label>off{{ idx }} (in)</label>
+          <input type="number" step="0.001" name="off{{ idx }}_in" value="{{ format_float(offsets_in[idx]) }}" required>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" formaction="/targets/apply" type="submit">Apply (Live)</button>
+      <button class="btn btn-primary" formaction="/targets/save" type="submit">Save to Disk</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

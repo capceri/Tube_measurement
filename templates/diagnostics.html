@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel hero">
+  <div>
+    <h1>AL1322 Diagnostics</h1>
+    <p>Stale if last OK read older than 2 seconds.</p>
+  </div>
+</section>
+
+<section class="panel">
+  <table>
+    <thead>
+      <tr>
+        <th>Port</th>
+        <th>Last Call</th>
+        <th>Result</th>
+        <th>Last OK</th>
+        <th>Stale</th>
+        <th>HTTP</th>
+        <th>Error Count</th>
+        <th>Last Error</th>
+        <th>Last Hex</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for port in state.port_status %}
+      {% set age = (now - port.last_ok_ts) if port.last_ok_ts else None %}
+      <tr>
+        <td>{{ port.port }}</td>
+        <td>{{ port.last_call_ts if port.last_call_ts else '-' }}</td>
+        <td>
+          {% if port.last_call_ts is none %}
+            -
+          {% elif port.last_error %}
+            <span class="flag fail">ERROR</span>
+          {% else %}
+            <span class="flag pass">OK</span>
+          {% endif %}
+        </td>
+        <td>{{ port.last_ok_ts if port.last_ok_ts else '-' }}</td>
+        <td>
+          {% if age is none %}
+            -
+          {% elif age > 2.0 %}
+            <span class="flag fail">STALE</span>
+          {% else %}
+            <span class="flag pass">OK</span>
+          {% endif %}
+        </td>
+        <td>{{ port.last_http_status if port.last_http_status else '-' }}</td>
+        <td>{{ port.error_count }}</td>
+        <td>{{ port.last_error if port.last_error else '-' }}</td>
+        <td>{{ port.last_raw_hex if port.last_raw_hex else '-' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel hero">
+  <div>
+    <h1>WiFi</h1>
+    <p>Connect the Pi to a wireless network.</p>
+  </div>
+  <div class="status-pill {{ 'pass' if active_ssid else 'fail' }}">
+    {{ active_ssid if active_ssid else 'NOT CONNECTED' }}
+  </div>
+</section>
+
+{% if message %}
+<section class="panel notice {{ message_kind }}">
+  <strong>{{ message }}</strong>
+</section>
+{% endif %}
+
+<section class="grid two wifi-grid">
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Available Networks</h2>
+      <a class="btn" href="/wifi?rescan=1">Rescan</a>
+    </div>
+    {% if scan_error %}
+    <p class="warn-text">{{ scan_error }}</p>
+    {% endif %}
+    <table>
+      <thead>
+        <tr>
+          <th>SSID</th>
+          <th>Signal</th>
+          <th>Security</th>
+          <th>Active</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for net in networks %}
+        <tr>
+          <td>{{ net.ssid }}</td>
+          <td>{{ net.signal }}%</td>
+          <td>{{ net.security }}</td>
+          <td>{{ 'YES' if net.active else '-' }}</td>
+        </tr>
+        {% endfor %}
+        {% if not networks %}
+        <tr>
+          <td colspan="4">No networks found.</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <h2>Connect</h2>
+    <p class="muted-text">Leave password blank for open networks.</p>
+    <form method="post" action="/wifi/connect">
+      <div class="form-grid">
+        <label>SSID</label>
+        <input type="text" name="ssid" required>
+        <label>Password</label>
+        <input type="password" name="password">
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">Connect</button>
+      </div>
+    </form>
+    <div class="wifi-status">
+      <div><strong>Current SSID:</strong> {{ active_ssid if active_ssid else '-' }}</div>
+      <div><strong>IP Address:</strong> {{ ip_addr if ip_addr else '-' }}</div>
+    </div>
+  </div>
+</section>
+{% endblock %}

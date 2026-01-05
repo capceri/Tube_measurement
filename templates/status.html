@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+<meta http-equiv="refresh" content="1">
+<section class="panel hero">
+  <div>
+    <h1>Status</h1>
+    <p>Last successful read: {{ last_ok_str }}{% if last_ok_age is not none %} ({{ format_float(last_ok_age) }}s ago){% endif %}</p>
+  </div>
+  <div class="status-pill {{ 'pass' if state.overall_pass else 'fail' }}">
+    {{ 'PASS' if state.overall_pass else 'FAIL' }}
+  </div>
+</section>
+
+<section class="grid two">
+  <div class="panel">
+    <h2>Measurements (mm)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Channel</th>
+          <th>Raw Hex</th>
+          <th>Raw</th>
+          <th>Value mm</th>
+          <th>Value in</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for idx in range(8) %}
+        <tr>
+          <td>ch{{ idx }}</td>
+          <td>{{ state.raw_hex[idx] if state.raw_hex[idx] else '-' }}</td>
+          <td>{{ format_float(state.raw_values[idx]) }}</td>
+          <td>{{ format_float(state.values_mm[idx]) }}</td>
+          <td>{{ format_float(state.values_in[idx]) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <h2>Computed</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Check</th>
+          <th>Value (mm)</th>
+          <th>Value (in)</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, label in [
+          ('d1', 'd1'),
+          ('d2', 'd2'),
+          ('dDelta', 'dDelta'),
+          ('end1_rng', 'end1_rng'),
+          ('end2_rng', 'end2_rng'),
+          ('length', 'length')
+        ] %}
+        <tr>
+          <td>{{ label }}</td>
+          <td>{{ format_float(state.metrics_mm[key]) }}</td>
+          <td>{{ format_float(state.metrics_in[key]) }}</td>
+          <td class="flag {{ 'pass' if state.checks.get(key if key != 'dDelta' else 'dDelta') else 'fail' }}">
+            {{ 'PASS' if state.checks.get(key if key != 'dDelta' else 'dDelta') else 'FAIL' }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="grid two">
+  <div class="panel">
+    <h2>Targets & Tolerances (in)</h2>
+    <table>
+      <tbody>
+        <tr><td>d1 target</td><td>{{ format_float(cfg.targets.d1_target / 25.4) }}</td></tr>
+        <tr><td>d1 tol</td><td>{{ format_float(cfg.targets.d1_tol / 25.4) }}</td></tr>
+        <tr><td>d2 target</td><td>{{ format_float(cfg.targets.d2_target / 25.4) }}</td></tr>
+        <tr><td>d2 tol</td><td>{{ format_float(cfg.targets.d2_tol / 25.4) }}</td></tr>
+        <tr><td>length target</td><td>{{ format_float(cfg.targets.len_target / 25.4) }}</td></tr>
+        <tr><td>length tol</td><td>{{ format_float(cfg.targets.len_tol / 25.4) }}</td></tr>
+        <tr><td>dDelta max</td><td>{{ format_float(cfg.targets.dDelta_max / 25.4) }}</td></tr>
+        <tr><td>end1 max</td><td>{{ format_float(cfg.targets.end1_max / 25.4) }}</td></tr>
+        <tr><td>end2 max</td><td>{{ format_float(cfg.targets.end2_max / 25.4) }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <h2>Offsets (in)</h2>
+    <table>
+      <thead>
+        <tr><th>Channel</th><th>Offset</th></tr>
+      </thead>
+      <tbody>
+        {% for idx in range(8) %}
+        <tr>
+          <td>off{{ idx }}</td>
+          <td>{{ format_float(cfg.offsets_mm[idx] / 25.4) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

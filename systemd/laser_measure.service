@@ -1,0 +1,20 @@
+[Unit]
+Description=Laser Measurement (AL1322 + HMI + Dashboard)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/laser_measure_rpi
+ExecStart=/usr/bin/python3 /opt/laser_measure_rpi/src/main.py
+Restart=always
+RestartSec=2
+Environment=PYTHONUNBUFFERED=1
+Environment=CONFIG_PATH=/opt/laser_measure_rpi/config/config.json
+# Optional overrides:
+# Environment=AL1322_IP=192.168.100.50
+# Environment=HMI_SERIAL_PORT=/dev/serial0
+# Environment=MOCK_AL1322=1
+
+[Install]
+WantedBy=multi-user.target

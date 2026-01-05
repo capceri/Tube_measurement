@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title if title else "Laser Measurement Dashboard" }}</title>
+  <link rel="stylesheet" href="/static/style.css?v=5">
+</head>
+<body class="{{ body_class if body_class else '' }}">
+  <div class="bg-shape"></div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">LM</div>
+      <div>
+        <div class="brand-title">Laser Measurement</div>
+        <div class="brand-sub">AL1322 + Raspberry Pi</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="/operator" class="nav-link">Operator</a>
+      <a href="/status" class="nav-link">Status</a>
+      <a href="/diagnostics" class="nav-link">Diagnostics</a>
+      <a href="/targets" class="nav-link">Targets</a>
+      <a href="/wifi" class="nav-link">WiFi</a>
+      <a href="/logs" class="nav-link">Logs</a>
+    </nav>
+    <div class="chip {{ 'chip-warn' if state and state.mock_mode else '' }}">
+      {% if state and state.mock_mode %}
+        MOCK MODE ACTIVE
+      {% else %}
+        LIVE MODE
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

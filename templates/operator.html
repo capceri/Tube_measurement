@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<meta http-equiv="refresh" content="1">
+<section class="operator-screen">
+  <div class="operator-main">
+    <div class="operator-header">
+      <div class="operator-title">Operator Live</div>
+      <div class="operator-sub">Last OK: {{ last_ok_str }}{% if last_ok_age is not none %} ({{ format_float(last_ok_age) }}s){% endif %}</div>
+    </div>
+    <div class="operator-list">
+      {% for key, label in [
+        ('d1', 'Diameter 1'),
+        ('d2', 'Diameter 2'),
+        ('end1_rng', 'End 1'),
+        ('end2_rng', 'End 2'),
+        ('length', 'Length')
+      ] %}
+      <div class="operator-row">
+        <div class="operator-label">{{ label }}</div>
+        <div class="operator-box">
+          <div class="operator-value-main">{{ format_float(state.metrics_in[key]) }}</div>
+          <div class="operator-value-sub">{{ format_float(state.metrics_mm[key]) }} mm</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <aside class="operator-side">
+    <div class="operator-status-box {{ 'pass' if state.overall_pass else 'fail' }}">
+      <div class="operator-status-label">STATUS</div>
+      <div class="operator-status-text">{{ 'PASS' if state.overall_pass else 'FAIL' }}</div>
+    </div>
+    <a class="operator-btn" href="/targets#targets-section">Targets</a>
+    <a class="operator-btn" href="/targets#offsets-section">Offsets</a>
+    <a class="operator-btn operator-btn-light" href="/wifi">WiFi</a>
+  </aside>
+</section>
+{% endblock %}

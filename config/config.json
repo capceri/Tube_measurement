@@ -1,0 +1,41 @@
+{
+  "al1322_ip": "192.168.100.1",
+  "poll_interval_s": 0.5,
+  "request_timeout_s": 1.0,
+  "log_capacity": 200,
+  "hmi": {
+    "serial_port": "/dev/serial0",
+    "baud": 115200
+  },
+  "targets": {
+    "d1_target": 0.0,
+    "d1_tol": 0.05,
+    "d2_target": 0.0,
+    "d2_tol": 0.05,
+    "len_target": 1165.0,
+    "len_tol": 0.2,
+    "dDelta_max": 0.05,
+    "end1_max": 0.05,
+    "end2_max": 0.05
+  },
+  "offsets_mm": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "channels": [
+    {"raw_format": "uint_be", "scale": 0.001, "offset": 0.0, "start_bit": null, "bit_length": null},
+    {"raw_format": "uint_be", "scale": 0.001, "offset": 0.0, "start_bit": null, "bit_length": null},
+    {"raw_format": "uint_be", "scale": 0.001, "offset": 0.0, "start_bit": null, "bit_length": null},
+    {"raw_format": "uint_be", "scale": 0.001, "offset": 0.0, "start_bit": null, "bit_length": null},
+    {"raw_format": "uint_be", "scale": 0.001, "offset": 0.0, "start_bit": null, "bit_length": null},
+    {"raw_format": "uint_be", "scale": 0.001, "offset": 0.0, "start_bit": null, "bit_length": null},
+    {"raw_format": "uint_be", "scale": 0.001, "offset": 0.0, "start_bit": null, "bit_length": null},
+    {"raw_format": "uint_be", "scale": 0.001, "offset": 0.0, "start_bit": null, "bit_length": null}
+  ]
+}

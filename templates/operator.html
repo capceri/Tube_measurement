@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+<script>
+  (function () {
+    var host = window.location.hostname;
+    var isLocalHost = host === "localhost" || host === "127.0.0.1";
+    var w = window.innerWidth || 0;
+    var h = window.innerHeight || 0;
+    if (!isLocalHost && w <= 1100 && h <= 700) {
+      window.location.replace("http://localhost:8080" + window.location.pathname + window.location.search);
+    }
+  })();
+</script>
 <meta http-equiv="refresh" content="1">
 <section class="operator-screen">
   <div class="operator-main">
@@ -31,7 +42,6 @@
       <div class="operator-status-text">{{ 'PASS' if state.overall_pass else 'FAIL' }}</div>
     </div>
     <a class="operator-btn" href="/targets#targets-section">Targets</a>
-    <a class="operator-btn" href="/targets#offsets-section">Offsets</a>
     <a class="operator-btn operator-btn-light" href="/wifi">WiFi</a>
   </aside>
 </section>

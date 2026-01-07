@@ -48,6 +48,27 @@ def _run_cmd(args: List[str], timeout_s: float) -> Tuple[bool, str, str]:
     return True, result.stdout.strip(), result.stderr.strip()
 
 
+def _split_nmcli_fields(line: str) -> List[str]:
+    parts: List[str] = []
+    current: List[str] = []
+    escape = False
+    for ch in line:
+        if escape:
+            current.append(ch)
+            escape = False
+            continue
+        if ch == "\\":
+            escape = True
+            continue
+        if ch == ":":
+            parts.append("".join(current))
+            current = []
+            continue
+        current.append(ch)
+    parts.append("".join(current))
+    return parts
+
+
 def _get_wlan_ip() -> Optional[str]:
     ok, out, _ = _run_cmd(["ip", "-4", "-o", "addr", "show", "dev", "wlan0"], timeout_s=2.0)
     if not ok or not out:
@@ -59,8 +80,17 @@ def _get_wlan_ip() -> Optional[str]:
     return None
 
 
+def _get_active_connection_name() -> Optional[str]:
+    ok, out, _ = _run_cmd(["nmcli", "-t", "-f", "GENERAL.CONNECTION", "dev", "show", "wlan0"], timeout_s=2.0)
+    if not ok or not out:
+        return None
+    _, _, value = out.partition(":")
+    value = value.strip()
+    return value if value else None
+
+
 def _list_wifi_networks(rescan: bool) -> Tuple[List[Dict[str, str]], Optional[str], Optional[str], Optional[str]]:
-    args = ["nmcli", "-t", "-m", "tab", "-f", "ACTIVE,SSID,SIGNAL,SECURITY", "dev", "wifi", "list"]
+    args = ["nmcli", "-t", "-c", "no", "-f", "ACTIVE,SSID,SIGNAL,SECURITY", "dev", "wifi", "list"]
     if rescan:
         args += ["--rescan", "yes"]
     ok, out, err = _run_cmd(args, timeout_s=8.0)
@@ -71,7 +101,7 @@ def _list_wifi_networks(rescan: bool) -> Tuple[List[Dict[str, str]], Optional[st
     for line in out.splitlines():
         if not line.strip():
             continue
-        parts = line.split("\t")
+        parts = _split_nmcli_fields(line)
         if len(parts) < 4:
             continue
         active = parts[0].strip() in ("yes", "*")
@@ -92,6 +122,8 @@ def _list_wifi_networks(rescan: bool) -> Tuple[List[Dict[str, str]], Optional[st
             }
         )
     networks.sort(key=lambda n: (not n["active"], -int(n["signal"]), n["ssid"]))
+    if not active_ssid:
+        active_ssid = _get_active_connection_name()
     return networks, active_ssid, _get_wlan_ip(), None
 
 
